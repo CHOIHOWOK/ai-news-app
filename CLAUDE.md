@@ -8,14 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Only the bare `create-next-app` scaffold exists (Next.js 16, React 19, Tailwind 4, App Router, `src/` dir, alias `@/*`). No app code has been written yet. `prd.md` is the source of truth for requirements (written in Korean): an AI news collector that pulls RSS (TechCrunch AI, The Verge AI), has Claude translate/summarize/categorize into Korean, shows cards, and saves to Notion. Build in the order of PRD §10 (Clerk → Neon+Drizzle → RSS+Claude → card UI → category CRUD → Notion MCP).
 
-Planned stack not yet installed: Clerk, Neon (Postgres) + Drizzle ORM, Claude API, `rss-parser`, `@modelcontextprotocol/sdk` (remote Notion MCP over OAuth).
-
 ## Commands
 
-- `npm run dev` — dev server (Turbopack)
-- `npm run build` / `npm start` — production build / serve
-- `npm run lint` — ESLint (flat config, `eslint.config.mjs`)
-- No test runner is configured.
+Standard scripts in `package.json`. No test runner is configured.
 
 ## Architecture notes (from PRD)
 
@@ -29,5 +24,5 @@ Planned stack not yet installed: Clerk, Neon (Postgres) + Drizzle ORM, Claude AP
 ## Environment quirks
 
 - Directory name `AI-News_Collecotr` contains capitals, so `create-next-app` can't run in place; the npm package name is `ai-news-collector`.
-- The folder is not a git repository.
+- The folder is a git repository (`main` is the main branch; feature work such as Clerk auth goes on branches like `auth`).
 - `AGENTS.md` warns this Next.js version has breaking changes — read the relevant guide in `node_modules/next/dist/docs/` before writing Next.js code.
