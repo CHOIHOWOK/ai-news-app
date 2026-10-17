@@ -66,7 +66,7 @@
 
 ## 8. 데이터 모델
 - **categories**: id, name(unique), description(분류 힌트), createdAt
-- **articles**: id, sourceName, url(unique), originalTitle, titleKo, summaryKo, publishedAt, categoryId(FK, nullable=미분류), notionPageUrl(nullable), fetchedAt
+- **articles**: id, sourceName, url(unique), originalTitle, author(nullable, 원문 작성자), titleKo, summaryKo, publishedAt, categoryId(FK, nullable=미분류), notionPageUrl(nullable), fetchedAt
 - **notion_oauth**: Notion MCP OAuth 토큰/클라이언트 정보(단일 행)
 
 ## 9. 주요 흐름
