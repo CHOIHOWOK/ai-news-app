@@ -10,7 +10,7 @@ UI 작업(대시보드, 카드, 카테고리 바 등)은 `ui.md`의 가이드를
 
 ## 프로젝트 현황
 
-Next.js 16, React 19, Tailwind 4, App Router, `src/` 디렉터리, 별칭 `@/*`. 지금까지 완료된 것: Clerk 인증(`/`의 로그인 모달 게이트), Neon 프로젝트 `ai-news`의 `neondb` 데이터베이스에 적용된 Neon + Drizzle 스키마/마이그레이션, 샘플 기사 5건. 아직 만들지 않은 것: RSS 가져오기, Claude 요약, 카드 UI, 카테고리 CRUD, Notion MCP. 요구사항의 기준 문서는 `prd.md`(한국어)이다. 내용은 RSS(TechCrunch AI, The Verge AI)를 가져와 Claude가 한국어로 번역·요약·카테고리 분류하고, 카드로 보여주며, Notion에 저장하는 AI 뉴스 수집기이다. 구현은 PRD §10 순서(Clerk → Neon+Drizzle → RSS+Claude → 카드 UI → 카테고리 CRUD → Notion MCP)를 따른다.
+Next.js 16, React 19, Tailwind 4, App Router, `src/` 디렉터리, 별칭 `@/*`. 지금까지 완료된 것: Clerk 인증(`/`의 로그인 모달 게이트), Neon 프로젝트 `ai-news`의 `neondb` 데이터베이스에 적용된 Neon + Drizzle 스키마/마이그레이션, 샘플 기사 5건, 대시보드(`/dashboard`: 카드 목록 + 카테고리 필터 + 9개씩 페이지 나눔), "뉴스 가져오기" 버튼(RSS 24시간 분량 저장, 한국어 컬럼은 원문으로 임시 채움). 아직 만들지 않은 것: Claude 번역·요약·분류, 카테고리 CRUD("+ 카테고리 추가" 버튼은 비활성), Notion 저장. 요구사항의 기준 문서는 `prd.md`(한국어)이다. 내용은 RSS(TechCrunch AI, The Verge AI)를 가져와 Claude가 한국어로 번역·요약·카테고리 분류하고, 카드로 보여주며, Notion에 저장하는 AI 뉴스 수집기이다. 구현은 PRD §10 순서(Clerk → Neon+Drizzle → RSS+Claude → 카드 UI → 카테고리 CRUD → Notion MCP)를 따르되, 카드 UI는 RSS보다 먼저 만들어져 샘플 데이터로 동작한다.
 
 ## 명령어
 
@@ -24,6 +24,8 @@ Next.js 16, React 19, Tailwind 4, App Router, `src/` 디렉터리, 별칭 `@/*`.
 - `src/db/schema.ts` — 테이블 `categories`, `articles`, `notion_oauth`(단일 행, CHECK로 `id = 1` 강제). `articles.categoryId`는 `ON DELETE SET NULL`이다(null = 미분류). 스키마는 여기서 바꾼 뒤 `db:generate` + `db:migrate`를 실행한다.
 - `src/db/index.ts` — `@neondatabase/serverless`(neon-http 드라이버) 기반 Drizzle 클라이언트.
 - `src/proxy.ts` — `middleware.ts`를 대체하는 Next 16 방식의 파일이며 Clerk를 처리한다. 페이지는 그대로 통과시키고(로그인은 `app/page.tsx`의 `<Show when="signed-out|signed-in">` + `components/sign-in-gate.tsx`에서 처리), `/api`와 `/trpc` 라우트는 `auth.protect()`로 보호하므로 새 API 라우트는 자동으로 401을 반환한다.
+- `src/app/dashboard/page.tsx` — 서버 컴포넌트. 페이지는 proxy가 막지 않으므로 `auth()`로 직접 확인하고 없으면 `/`로 redirect한다. 카테고리 필터는 `?category=<id|none>` 쿼리이며(없는 값은 전체), Drizzle로 직접 조회한다(`publishedAt desc nulls last`). 페이지 나눔은 `?page=<n>`(9개씩, `components/pagination.tsx`)이다. `components/category-bar.tsx`(링크 칩)와 `components/news-card.tsx`를 사용한다.
+- `src/lib/rss/` — `feeds.ts`(피드 2개), `parse.ts`(rss-parser로 RSS/Atom 정규화), `fetch-news.ts`(피드별 독립 처리, 24시간 필터, `url` 충돌 시 무시하는 삽입). `src/app/dashboard/actions.ts`의 Server Action이 `auth()` 확인 후 호출하며 `components/fetch-news-button.tsx`가 버튼/결과 메시지를 담당한다.
 - `.mcp.json` — Neon MCP 서버를 등록한다(프로젝트 id `silent-base-45009213`).
 
 ## 아키텍처 메모 (PRD 기준)
@@ -37,6 +39,7 @@ Next.js 16, React 19, Tailwind 4, App Router, `src/` 디렉터리, 별칭 `@/*`.
 
 ## 환경 특이사항
 
+- 앱 이름은 "AI뉴스수집기"(붙여 씀)가 표준이다. `layout.tsx`, `page.tsx`, `sign-in-gate.tsx`에는 아직 옛 표기 "AI 뉴스 콜렉터"가 남아 있다(`ui.md` §2).
 - 디렉터리 이름 `AI-News_Collecotr`에 대문자가 있어 제자리에서 `create-next-app`을 실행할 수 없다. npm 패키지 이름은 `ai-news-collector`이다.
 - 이 폴더는 git 저장소이다(`main`이 메인 브랜치이고, Clerk 인증 같은 기능 작업은 `auth` 같은 브랜치에서 한다).
 - `AGENTS.md`는 이 Next.js 버전에 호환되지 않는 변경이 있다고 경고한다. Next.js 코드를 쓰기 전에 `node_modules/next/dist/docs/`의 관련 가이드를 읽는다.

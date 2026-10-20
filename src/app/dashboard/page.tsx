@@ -3,22 +3,26 @@ import { auth } from "@clerk/nextjs/server";
 import { count, desc, eq, isNull, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { CategoryBar } from "@/components/category-bar";
+import { FetchNewsButton } from "@/components/fetch-news-button";
 import { NewsCard } from "@/components/news-card";
+import { Pagination } from "@/components/pagination";
 import { db } from "@/db";
 import { articles, categories } from "@/db/schema";
+
+const PAGE_SIZE = 9;
 
 export const metadata = { title: "대시보드 · AI뉴스수집기" };
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; page?: string }>;
 }) {
   // 페이지는 proxy에서 막지 않으므로 여기서 직접 인증을 확인한다
   const { userId } = await auth();
   if (!userId) redirect("/");
 
-  const { category } = await searchParams;
+  const { category, page: pageParam } = await searchParams;
 
   const [categoryRows, countRows] = await Promise.all([
     db.select().from(categories).orderBy(categories.id),
@@ -44,6 +48,28 @@ export default async function DashboardPage({
         ? isNull(articles.categoryId)
         : eq(articles.categoryId, Number(selected));
 
+  // 선택한 카테고리의 전체 건수로 페이지 수를 계산하고, 범위를 벗어난 값은 보정한다
+  const filteredCount =
+    selected === "all"
+      ? totalCount
+      : selected === "none"
+        ? (counts.get(null) ?? 0)
+        : (counts.get(Number(selected)) ?? 0);
+  const totalPages = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
+  const requested = Number.parseInt(pageParam ?? "1", 10);
+  const page = Math.min(
+    Math.max(Number.isNaN(requested) ? 1 : requested, 1),
+    totalPages,
+  );
+
+  const hrefFor = (p: number) => {
+    const params = new URLSearchParams();
+    if (selected !== "all") params.set("category", selected);
+    if (p > 1) params.set("page", String(p));
+    const qs = params.toString();
+    return qs ? `/dashboard?${qs}` : "/dashboard";
+  };
+
   const rows = await db
     .select({ article: articles, categoryName: categories.name })
     .from(articles)
@@ -52,7 +78,10 @@ export default async function DashboardPage({
     .orderBy(
       sql`${articles.publishedAt} desc nulls last`,
       desc(articles.fetchedAt),
-    );
+      desc(articles.id),
+    )
+    .limit(PAGE_SIZE)
+    .offset((page - 1) * PAGE_SIZE);
 
   const chips = [
     { key: "all", name: "전체", count: totalCount },
@@ -76,11 +105,14 @@ export default async function DashboardPage({
       </header>
 
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            오늘의 AI 뉴스
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500">총 {totalCount}건</p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              오늘의 AI 뉴스
+            </h1>
+            <p className="mt-1 text-sm text-zinc-500">총 {totalCount}건</p>
+          </div>
+          <FetchNewsButton />
         </div>
 
         <div className="mt-6">
@@ -104,6 +136,8 @@ export default async function DashboardPage({
             ))}
           </div>
         )}
+
+        <Pagination page={page} totalPages={totalPages} hrefFor={hrefFor} />
       </main>
     </div>
   );
