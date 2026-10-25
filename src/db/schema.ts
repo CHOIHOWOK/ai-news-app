@@ -37,6 +37,8 @@ export const articles = pgTable(
     categoryId: integer("category_id").references(() => categories.id, {
       onDelete: "set null",
     }),
+    // null = Claude 처리 전(원문으로 임시 채움) → 다음 가져오기 때 재처리 대상
+    aiProcessedAt: timestamp("ai_processed_at", { withTimezone: true }),
     // 값이 있으면 이미 Notion에 저장된 기사
     notionPageUrl: text("notion_page_url"),
     fetchedAt: timestamp("fetched_at", { withTimezone: true })

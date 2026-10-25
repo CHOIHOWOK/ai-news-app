@@ -2,10 +2,11 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { fetchNews, type FeedResult } from "@/lib/rss/fetch-news";
+import { fetchNews, type AiResult, type FeedResult } from "@/lib/rss/fetch-news";
 
 export async function fetchNewsAction(): Promise<{
   feeds: FeedResult[];
+  ai?: AiResult;
   error?: string;
 }> {
   // Server Action은 proxy의 /api 보호 대상이 아니므로 직접 확인한다
