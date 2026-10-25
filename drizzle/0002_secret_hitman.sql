@@ -1,0 +1,1 @@
+ALTER TABLE "articles" ADD COLUMN "ai_processed_at" timestamp with time zone;

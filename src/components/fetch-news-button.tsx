@@ -2,9 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { fetchNewsAction } from "@/app/dashboard/actions";
-import type { FeedResult } from "@/lib/rss/fetch-news";
+import type { AiResult, FeedResult } from "@/lib/rss/fetch-news";
 
-type Result = { feeds: FeedResult[]; error?: string };
+type Result = { feeds: FeedResult[]; ai?: AiResult; error?: string };
 
 export function FetchNewsButton() {
   const [pending, startTransition] = useTransition();
@@ -20,7 +20,9 @@ export function FetchNewsButton() {
     });
   }
 
-  const hasFailure = !!result && (!!result.error || result.feeds.some((f) => !f.ok));
+  const hasFailure =
+    !!result &&
+    (!!result.error || result.feeds.some((f) => !f.ok) || !!result.ai?.failed);
   const totalInserted = result?.feeds.reduce((sum, f) => sum + f.inserted, 0) ?? 0;
 
   return (
@@ -50,7 +52,13 @@ export function FetchNewsButton() {
                     ? `${f.source} 성공(${f.inserted}건)`
                     : `${f.source} 실패`,
                 )
-                .join(", ")}
+                .join(", ") +
+              (result.ai && result.ai.processed + result.ai.failed > 0
+                ? ` · 번역·분류 ${result.ai.processed}건` +
+                  (result.ai.failed
+                    ? `, 실패 ${result.ai.failed}건(원문 유지, 다음에 재시도)`
+                    : "")
+                : "")}
         </p>
       )}
     </div>
