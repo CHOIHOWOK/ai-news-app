@@ -1,4 +1,5 @@
 import type { Article } from "@/db/schema";
+import { SaveNewsButton } from "@/components/save-news-button";
 
 const dateFormat = new Intl.DateTimeFormat("ko-KR", {
   timeZone: "Asia/Seoul",
@@ -60,26 +61,10 @@ export function NewsCard({
         >
           원문 보기 ↗
         </a>
-        {article.notionPageUrl ? (
-          <a
-            href={article.notionPageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            Notion에서 보기 ↗
-          </a>
-        ) : (
-          // Notion 저장은 아직 구현 전이라 비활성 상태로 둔다
-          <button
-            type="button"
-            disabled
-            title="Notion 저장은 곧 제공됩니다"
-            className="cursor-not-allowed rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-400 dark:border-zinc-700 dark:text-zinc-600"
-          >
-            Notion 저장
-          </button>
-        )}
+        <SaveNewsButton
+          articleId={article.id}
+          notionPageUrl={article.notionPageUrl}
+        />
       </div>
     </article>
   );
