@@ -6,7 +6,7 @@
 
 - **로그인**: Clerk 인증. 로그인하지 않으면 대시보드와 API에 접근할 수 없습니다.
 - **뉴스 가져오기**: TechCrunch AI, The Verge AI 피드에서 최근 24시간 기사를 수집합니다. 피드 하나가 실패해도 나머지는 계속 처리하고, URL이 같은 기사는 중복 저장하지 않습니다.
-- **번역·요약·분류**: 신규 기사를 Claude로 한 번에 배치 처리합니다. 처리에 실패한 기사는 원문으로 두었다가 다음 가져오기 때 재시도합니다.
+- **번역·요약·분류**: 신규 기사를 Claude(`claude-opus-5-5`)로 한 번에 배치 처리합니다. 분류는 DB에 있는 카테고리 중에서 고르며, 맞는 것이 없으면 "미분류"가 됩니다. 처리에 실패한 기사는 원문으로 두었다가 다음 가져오기 때 재시도합니다.
 - **카드 목록**: 카테고리 필터와 9개씩 페이지 나눔을 지원합니다.
 - **Notion 저장**: "뉴스저장"을 누르면 Notion 데이터베이스에 페이지가 만들어지고, 버튼이 "저장된"으로 바뀝니다. 같은 기사는 다시 저장되지 않습니다.
 
@@ -38,9 +38,6 @@ DATABASE_URL=
 
 # Anthropic Claude API (https://console.anthropic.com)
 ANTHROPIC_API_KEY=
-
-# 앱 베이스 URL (예: http://localhost:3000)
-APP_URL=
 
 # Notion 통합 토큰과 저장 대상 데이터베이스 ID
 NOTION_API_TOKEN=
@@ -102,8 +99,8 @@ src/
 ├── db/                       Drizzle 스키마, 클라이언트, 시드
 ├── lib/
 │   ├── rss/                  피드 수집·파싱·저장
-│   ├── ai/                   Claude 번역·요약·분류
-│   └── notion/               Notion 저장
+│   ├── ai/                   Claude 클라이언트(client.ts)와 번역·요약·분류(enrich.ts)
+│   └── notion/               Notion 페이지 생성(save-article.ts)
 └── proxy.ts                  Clerk 인증 (Next 16의 middleware 대체)
 drizzle/                      마이그레이션 SQL
 ```
