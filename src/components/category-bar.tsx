@@ -12,10 +12,21 @@ const active = "bg-indigo-600 font-medium text-white";
 export function CategoryBar({
   chips,
   selected,
+  q,
 }: {
   chips: CategoryChip[];
   selected: string;
+  q?: string;
 }) {
+  // 검색어가 있으면 카테고리를 바꿔도 유지한다
+  const hrefFor = (key: string) => {
+    const params = new URLSearchParams();
+    if (key !== "all") params.set("category", key);
+    if (q) params.set("q", q);
+    const qs = params.toString();
+    return qs ? `/dashboard?${qs}` : "/dashboard";
+  };
+
   return (
     <nav aria-label="카테고리" className="flex flex-wrap gap-2">
       {chips.map((chip) => {
@@ -23,7 +34,7 @@ export function CategoryBar({
         return (
           <Link
             key={chip.key}
-            href={chip.key === "all" ? "/dashboard" : `/dashboard?category=${chip.key}`}
+            href={hrefFor(chip.key)}
             aria-current={isActive ? "page" : undefined}
             className={`${base} ${isActive ? active : idle}`}
           >
