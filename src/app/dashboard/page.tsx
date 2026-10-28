@@ -1,11 +1,12 @@
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import { count, desc, eq, isNull, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { CategoryBar } from "@/components/category-bar";
 import { FetchNewsButton } from "@/components/fetch-news-button";
 import { NewsCard } from "@/components/news-card";
 import { Pagination } from "@/components/pagination";
+import { SearchForm } from "@/components/search-form";
 import { db } from "@/db";
 import { articles, categories } from "@/db/schema";
 
@@ -16,13 +17,14 @@ export const metadata = { title: "대시보드 · AI뉴스수집기" };
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; page?: string }>;
+  searchParams: Promise<{ category?: string; page?: string; q?: string }>;
 }) {
   // 페이지는 proxy에서 막지 않으므로 여기서 직접 인증을 확인한다
   const { userId } = await auth();
   if (!userId) redirect("/");
 
-  const { category, page: pageParam } = await searchParams;
+  const { category, page: pageParam, q: qParam } = await searchParams;
+  const q = (qParam ?? "").trim().slice(0, 100);
 
   const [categoryRows, countRows] = await Promise.all([
     db.select().from(categories).orderBy(categories.id),
@@ -41,20 +43,29 @@ export default async function DashboardPage({
       ? (category as string)
       : "all";
 
-  const where =
+  const categoryWhere =
     selected === "all"
       ? undefined
       : selected === "none"
         ? isNull(articles.categoryId)
         : eq(articles.categoryId, Number(selected));
 
-  // 선택한 카테고리의 전체 건수로 페이지 수를 계산하고, 범위를 벗어난 값은 보정한다
-  const filteredCount =
-    selected === "all"
-      ? totalCount
-      : selected === "none"
-        ? (counts.get(null) ?? 0)
-        : (counts.get(Number(selected)) ?? 0);
+  // LIKE 와일드카드는 이스케이프해 입력한 글자 그대로 찾는다
+  const pattern = `%${q.replace(/[\\%_]/g, "\\$&")}%`;
+  const searchWhere = q
+    ? or(
+        ilike(articles.titleKo, pattern),
+        ilike(articles.summaryKo, pattern),
+        ilike(articles.originalTitle, pattern),
+      )
+    : undefined;
+  const where = and(categoryWhere, searchWhere);
+
+  // 카테고리·검색어를 적용한 전체 건수로 페이지 수를 계산하고, 범위를 벗어난 값은 보정한다
+  const [{ total: filteredCount }] = await db
+    .select({ total: count() })
+    .from(articles)
+    .where(where);
   const totalPages = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
   const requested = Number.parseInt(pageParam ?? "1", 10);
   const page = Math.min(
@@ -65,6 +76,7 @@ export default async function DashboardPage({
   const hrefFor = (p: number) => {
     const params = new URLSearchParams();
     if (selected !== "all") params.set("category", selected);
+    if (q) params.set("q", q);
     if (p > 1) params.set("page", String(p));
     const qs = params.toString();
     return qs ? `/dashboard?${qs}` : "/dashboard";
@@ -116,14 +128,26 @@ export default async function DashboardPage({
         </div>
 
         <div className="mt-6">
-          <CategoryBar chips={chips} selected={selected} />
+          <SearchForm
+            q={q}
+            category={selected}
+            clearHref={
+              selected === "all" ? "/dashboard" : `/dashboard?category=${selected}`
+            }
+          />
+        </div>
+
+        <div className="mt-4">
+          <CategoryBar chips={chips} selected={selected} q={q} />
         </div>
 
         {rows.length === 0 ? (
           <div className="mt-6 rounded-xl border border-dashed border-zinc-300 py-16 text-center text-zinc-500 dark:border-zinc-700">
-            {selected === "all"
-              ? "아직 수집된 뉴스가 없어요."
-              : "이 카테고리에는 뉴스가 없어요."}
+            {q
+              ? `"${q}"에 해당하는 뉴스가 없어요.`
+              : selected === "all"
+                ? "아직 수집된 뉴스가 없어요."
+                : "이 카테고리에는 뉴스가 없어요."}
           </div>
         ) : (
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
