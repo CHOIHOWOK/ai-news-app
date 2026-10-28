@@ -15,6 +15,7 @@ UI 작업(대시보드, 카드, 카테고리 바 등)을 하기 전에 `ui.md`�
 - 테스트 러너는 설정되어 있지 않다. 스키마는 `db:generate`(→ `drizzle/`의 SQL) 후 `db:migrate`로 Neon에 적용한다.
 - `npm run db:seed` — 기본 카테고리 5개를 삽입한다(멱등). `npx tsx src/db/sample-articles.ts` — 가짜 `example.com` 기사 5건을 삽입한다(`url` 기준 멱등).
 - drizzle-kit과 시드 스크립트는 dotenv로 `.env.local`에서 `DATABASE_URL`을 읽는다. `src/db/index.ts`는 값이 없으면 import 시점에 예외를 던지므로, 스크립트에서는 `config()` *이후에* `await import("./index")`를 해야 한다(`seed.ts` 참고).
+- `/news-workflow <브랜치이름>` — 새 기능 개발 워크플로(`.claude/commands/news-workflow.md`). main 브랜치 확인 → 새 브랜치 생성(이름이 없으면 기능을 물어 영어 소문자-하이픈 이름을 제안) → 개발 시작 안내와 기술 스택·컨벤션 안내 → "완료"/"done" 입력 시 변경 파일 목록과 커밋 메시지 제안, 확인 후 커밋하고 main에 병합 → 작업 요약. 브랜치만 만드는 `/new-branch`도 있다.
 
 ## 코드 구조
 
