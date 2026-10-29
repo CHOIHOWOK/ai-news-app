@@ -1,4 +1,5 @@
 import type { Article } from "@/db/schema";
+import { DeleteNewsButton } from "@/components/delete-news-button";
 import { SaveNewsButton } from "@/components/save-news-button";
 
 const dateFormat = new Intl.DateTimeFormat("ko-KR", {
@@ -36,15 +37,18 @@ export function NewsCard({
         >
           {categoryName ?? "미분류"}
         </span>
-        <span className="text-xs text-zinc-500">
-          {article.sourceName}
-          {date && (
-            <>
-              {" · "}
-              <time dateTime={date.toISOString()}>{formatDate(date)}</time>
-            </>
-          )}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-zinc-500">
+            {article.sourceName}
+            {date && (
+              <>
+                {" · "}
+                <time dateTime={date.toISOString()}>{formatDate(date)}</time>
+              </>
+            )}
+          </span>
+          <DeleteNewsButton articleId={article.id} />
+        </div>
       </div>
       <h3 className="mt-3 line-clamp-2 text-lg font-semibold leading-snug text-zinc-900 dark:text-zinc-50">
         {article.titleKo}
