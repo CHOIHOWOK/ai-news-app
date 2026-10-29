@@ -122,7 +122,9 @@ export default async function DashboardPage({
             <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               오늘의 AI 뉴스
             </h1>
-            <p className="mt-1 text-sm text-zinc-500">총 {totalCount}건</p>
+            <span className="mt-2 inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+              총 {totalCount}개의 뉴스
+            </span>
           </div>
           <FetchNewsButton />
         </div>
