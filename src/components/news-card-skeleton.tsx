@@ -3,22 +3,22 @@ export function NewsCardSkeleton() {
   return (
     <div
       aria-hidden="true"
-      className="flex animate-pulse flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+      className="flex animate-pulse flex-col rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex min-h-8 items-center justify-between gap-2">
         <div className="h-5 w-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-4 w-28 rounded bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-4 w-12 rounded bg-zinc-200 dark:bg-zinc-800" />
       </div>
       <div className="mt-3 h-5 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
       <div className="mt-2 h-5 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800" />
-      <div className="mt-4 flex-1 space-y-2">
+      <div className="mt-4 flex-1 space-y-2.5">
         <div className="h-4 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
         <div className="h-4 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
         <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
       </div>
-      <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3 dark:border-zinc-800">
+      <div className="mt-5 flex items-center justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
         <div className="h-4 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-8 w-20 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-8 w-24 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
       </div>
     </div>
   );
