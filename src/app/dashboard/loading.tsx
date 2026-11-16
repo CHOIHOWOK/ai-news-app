@@ -23,7 +23,7 @@ export default function Loading() {
           className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
           {Array.from({ length: SKELETON_COUNT }, (_, i) => (
-            <NewsCardSkeleton key={i} />
+            <NewsCardSkeleton key={i} featured={i === 0} />
           ))}
         </div>
       </main>

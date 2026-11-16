@@ -105,6 +105,11 @@ src/
 drizzle/                      마이그레이션 SQL
 ```
 
+## 사용한 플러그인
+
+- frontend design : UI 디자인 품질 향상
+- commit-commands: 깃 워크플로 자동화
+
 ## 참고
 
 - 단일 사용자 앱이라 데이터는 사용자별로 나누지 않고 공유합니다.
