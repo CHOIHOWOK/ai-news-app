@@ -134,7 +134,9 @@ export default async function DashboardPage({
             q={q}
             category={selected}
             clearHref={
-              selected === "all" ? "/dashboard" : `/dashboard?category=${selected}`
+              selected === "all"
+                ? "/dashboard"
+                : `/dashboard?category=${selected}`
             }
           />
         </div>
@@ -153,11 +155,12 @@ export default async function DashboardPage({
           </div>
         ) : (
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {rows.map(({ article, categoryName }) => (
+            {rows.map(({ article, categoryName }, index) => (
               <NewsCard
                 key={article.id}
                 article={article}
                 categoryName={categoryName}
+                featured={page === 1 && index === 0}
               />
             ))}
           </div>

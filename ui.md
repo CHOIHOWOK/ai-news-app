@@ -43,7 +43,7 @@
 
 - 카드 모서리 `rounded-xl`, 칩/배지 `rounded-full`, 버튼 `rounded-lg`
 - 그림자 `shadow-sm`, 카드 hover 시 `hover:shadow-md`
-- 전환 `transition` (색·그림자만, 움직임 효과 없음)
+- 전환 `transition` — 카드 hover만 예외로 2px 떠오르는 움직임(`hover:-translate-y-0.5`)과 인디고 테두리를 쓴다. `motion-reduce:`로 움직임을 끈다. 그 밖의 요소는 색·그림자만 바꾼다.
 
 ## 4. 메인 화면 구조
 
@@ -154,6 +154,11 @@ PRD F3의 표시 항목: 한국어 제목, 한국어 요약, 출처, 발행일, 
 - **날짜**: 7일 이내는 상대 표기("2일 전"), 그 외는 `2026.10.18` 형식. `<time dateTime>`을 사용한다.
 - **원문 링크**는 새 탭, `rel="noopener noreferrer"`.
 - **Notion 저장 버튼 상태**: 기본 / 저장 중(`disabled`, "저장 중…") / 저장됨(`notionPageUrl` 있음 → "Notion에서 보기 ↗" 링크로 대체, 중복 저장 방지) / 실패(버튼 아래 `text-xs` 오류 문구).
+- **레이아웃(구현 기준)**: 상단 = 출처 모노그램(이니셜) + 출처명 + 날짜 / 삭제 버튼, 중단 = 제목(`text-xl font-bold`)·요약, 하단 = 카테고리 배지 / 원문 보기·저장. 한글은 `break-keep`으로 단어 단위 줄바꿈한다. 카드 패딩은 `p-6`. hover 시 모노그램이 인디고로 채워진다.
+- **피처드 카드**: 1페이지의 첫 기사는 `featured`로 전체 폭(`sm:col-span-2 lg:col-span-3`)을 차지하고 `border-l-4 border-l-indigo-600`, 제목 `text-2xl sm:text-3xl`, 요약 `text-base leading-8`을 쓴다. 강조는 이 카드 하나에만 둔다.
+- **전체 클릭**: 제목 `<a>`에 `after:absolute after:inset-0`을 줘 카드 전체가 원문 링크가 된다. 날짜·삭제·하단 액션은 `relative z-10`으로 그 위에 둔다.
+- **hover**: 카드 `hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg`, 제목 `group-hover:text-indigo-700`, "↗"가 우상단으로 살짝 이동. 삭제 버튼은 `pointer-fine`(마우스) 환경에서 hover·포커스 때만 보이고, 터치 환경에서는 항상 보인다.
+- 메타 텍스트(날짜)는 다크 모드에서 `dark:text-zinc-400`으로 올려 AA 대비를 맞춘다.
 - 카드 높이는 내용에 맞추되 같은 줄 카드는 `flex-1` 요약 영역 덕분에 하단 액션이 정렬된다.
 
 ## 6. 상태 화면

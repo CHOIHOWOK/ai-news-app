@@ -27,10 +27,10 @@ export function DeleteNewsButton({ articleId }: { articleId: number }) {
       disabled={pending}
       aria-label="뉴스 삭제"
       title={error ?? "뉴스 삭제"}
-      className={`-mr-1 flex size-10 items-center justify-center rounded-lg border-2 text-2xl font-bold leading-none transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`-mr-2 flex size-9 items-center justify-center rounded-lg text-base leading-none transition focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:cursor-not-allowed disabled:opacity-60 ${
         error
-          ? "border-red-700 bg-red-200 text-red-800 dark:border-red-400 dark:bg-red-900 dark:text-red-200"
-          : "border-red-500 bg-red-100 text-red-600 hover:bg-red-500 hover:text-white dark:border-red-500 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white"
+          ? "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300"
+          : "text-zinc-400 hover:bg-red-50 hover:text-red-600 pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-within:opacity-100 dark:text-zinc-500 dark:hover:bg-red-950 dark:hover:text-red-400"
       }`}
     >
       ✕
