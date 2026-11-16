@@ -2,7 +2,7 @@
 name: convention-checker
 description: 컨벤션 검토 전문가. 코드를 수정한 직후 커밋전에 자동으로 호출됩니다.(use proactively). git diff main으로 변경된 코드를 가져와서 코딩 컨벤션을 검토합니다.
 tools: Read, Grep, Glob, Bash
-model: sonnet
+model: haiku
 skills: convention-check
 ---
 
