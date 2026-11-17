@@ -1,19 +1,22 @@
 import { NewsCardSkeleton } from "@/components/news-card-skeleton";
+import { SiteFooter } from "@/components/site-footer";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const SKELETON_COUNT = 6;
 
 export default function Loading() {
   return (
-    <div className="flex-1 bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
       <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/80">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <span className="text-base font-bold text-zinc-900 dark:text-zinc-50">
             AI뉴스수집기
           </span>
+          <ThemeToggle />
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           오늘의 AI 뉴스
         </h1>
@@ -27,6 +30,8 @@ export default function Loading() {
           ))}
         </div>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

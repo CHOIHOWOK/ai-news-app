@@ -37,7 +37,8 @@ UI 작업(대시보드, 카드, 카테고리 바 등)을 하기 전에 `ui.md`�
 
 ## 환경 특이사항
 
-- 앱 이름은 "AI뉴스수집기"(붙여 씀)가 표준이다. `layout.tsx`, `page.tsx`, `sign-in-gate.tsx`에는 아직 옛 표기 "AI 뉴스 콜렉터"가 남아 있다(`ui.md` §2).
+- 앱 이름은 "AI뉴스수집기"(붙여 씀)가 표준이다(`ui.md` §2).
+- 다크 모드는 `<html>`의 `dark` 클래스로 켠다. `layout.tsx`의 인라인 스크립트(`src/lib/theme.ts`)가 첫 페인트 전에 `localStorage`/시스템 설정을 반영하고, `components/theme-toggle.tsx`가 전환한다. 공통 푸터는 `components/site-footer.tsx`.
 - 디렉터리 이름 `AI-News_Collecotr`에 대문자가 있어 제자리에서 `create-next-app`을 실행할 수 없다. npm 패키지 이름은 `ai-news-collector`이다.
 - 이 폴더는 git 저장소이다(`main`이 메인 브랜치이고, Clerk 인증 같은 기능 작업은 `auth` 같은 브랜치에서 한다).
 - `AGENTS.md`는 이 Next.js 버전에 호환되지 않는 변경이 있다고 경고한다. Next.js 코드를 쓰기 전에 `node_modules/next/dist/docs/`의 관련 가이드를 읽는다.
