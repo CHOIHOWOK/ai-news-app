@@ -13,7 +13,9 @@ export function SignInGate() {
 
   return (
     <div className="flex flex-col items-center gap-6 text-center">
-      <h1 className="text-3xl font-semibold tracking-tight">AI 뉴스 콜렉터</h1>
+      <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+        AI뉴스수집기
+      </h1>
       <p className="text-zinc-600 dark:text-zinc-400">
         계속하려면 로그인이 필요합니다.
       </p>

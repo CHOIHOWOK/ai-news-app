@@ -40,7 +40,7 @@ export function CategoryBar({
           >
             {chip.name}
             <span
-              className={`ml-1.5 text-xs ${isActive ? "text-indigo-100" : "text-zinc-500"}`}
+              className={`ml-1.5 text-xs ${isActive ? "text-indigo-100" : "text-zinc-500 dark:text-zinc-400"}`}
             >
               {chip.count}
             </span>
